@@ -1,0 +1,11 @@
+x: initial NUMBER of nodes to be infected
+lambda: get infected by neighbors
+&DADES
+x=1,
+lambda=300d0,
+mu=0d0,
+immune_0=70d0,
+SEED0=1,
+NSEED=100,
+time_max=50d0,
+&END

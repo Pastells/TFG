@@ -1,0 +1,9 @@
+networks/
+results/
+programs/versions/
+programs/bin/*
+!programs/bin/.gitkeep
+programs/data/*
+!programs/data/.gitkeep
+programs/obj/*
+!programs/obj/.gitkeep

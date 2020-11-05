@@ -1,0 +1,15 @@
+x: initial NUMBER of nodes to be infected
+lambda: get infected by neighbors (gets divided by 100)
+mutation_rate: probability of mutation (gets divided by 1e5)
+&DADES
+x=10,
+lambda=100d0,
+mutation_rate=5d4,
+SEED0=20,
+NSEED=100,
+time_max=50d0,
+time_inc=50d0,
+tau=15d0,
+delta_max=10d0,
+&END
+
