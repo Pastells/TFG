@@ -22,7 +22,7 @@ integer :: x
 integer :: survival
 ! probability of infection
 real*8 :: lambda
-real*8 :: lambda_sum, prob_heal
+real*8 :: lambda_sum, prob_heal, prob_infect
 real*8 :: poisson_time, time
 real*8 :: M_var, M_var_1, S_var, mean=0d0
 real*8 :: ran2, random
@@ -139,9 +139,12 @@ loop_time: do while (n_infected.gt.0)
 lambda_sum = dble(n_infected)+dble(n_active_edges)*lambda
 time = time + poisson_time(lambda_sum,idum)
 prob_heal = dble(n_infected)/lambda_sum
-if (ran2(idum).lt. prob_heal) then
+prob_infect = 1d0 - prob_heal
+random = ran2(idum)
+if (random.lt. prob_heal) then
 ! heal
-    index_n = int(ran2(idum)*n_infected) + 1
+    !index_n = int(ran2(idum)*n_infected) + 1
+    index_n = int(random/prob_heal*n_infected) + 1
     node_n = infected(index_n)
     state(node_n) = 2
     n_recovered = n_recovered + 1
@@ -180,7 +183,8 @@ if (ran2(idum).lt. prob_heal) then
     enddo
 else
 ! infect
-    index_n = int(ran2(idum)*n_active_edges) + 1
+    !index_n = int(ran2(idum)*n_active_edges) + 1
+    index_n = int((random-prob_heal)/prob_infect*n_active_edges) + 1
     node_n = active_edges(index_n,2)
     state(node_n) = 1
     n_infected = n_infected + 1

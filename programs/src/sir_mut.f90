@@ -22,7 +22,7 @@ integer :: immune_length=5, n_mutation !,mutability
 integer, allocatable :: endemic(:)
 ! probability of infection
 real*8 :: lambda, lambda_sum, prob_heal, prob_infect
-real*8 :: mutation_rate !, prob_mutate
+real*8 :: mutation_rate, prob_mutate
 real*8 :: poisson_time, time, time_max, time_write, time_inc
 real*8 :: ran2, random, time_sum, time_sum_t
 logical :: exist
@@ -121,12 +121,13 @@ loop_time: do while ( (n_infected.gt.0) .and. (time.lt.time_max) )
 ! ===================
 lambda_sum = dble(n_infected)+dble(n_active_edges)*lambda+dble(n_infected)*mutation_rate
 prob_heal = dble(n_infected)/lambda_sum
-!prob_mutate = dble(n_infected)*mutation_rate/lambda_sum
 prob_infect = dble(n_active_edges)*lambda/lambda_sum
+prob_mutate = 1d0 - prob_heal - prob_infect
 random = ran2(idum)
 if (random.lt.prob_heal) then
 ! heal
-    index_inf = int(ran2(idum)*n_infected) + 1
+    !index_inf = int(ran2(idum)*n_infected) + 1
+    index_inf = int(random/prob_heal*n_infected) + 1
     node_n = infected(index_inf)
     call immunize(immune,state,node_n,N,immune_length)
     state_old = state(node_n)
@@ -159,7 +160,8 @@ if (random.lt.prob_heal) then
 
 elseif ( random .lt. (prob_heal+prob_infect) ) then
 ! infect
-    index_act = int(ran2(idum)*n_active_edges) + 1
+    !index_act = int(ran2(idum)*n_active_edges) + 1
+    index_act = int((random-prob_heal)/prob_infect*n_active_edges) + 1
     ! node to be infected
     node_n = active_edges(index_act,2)
     state(node_n) = state(active_edges(index_act,1))
@@ -192,7 +194,8 @@ else
 !mutate
     !mutability = mutability + 1
     !exit loop_time
-    index_inf = int(ran2(idum)*n_infected) + 1
+    !index_inf = int(ran2(idum)*n_infected) + 1
+    index_inf = int((random-prob_heal-prob_infect)/prob_mutate*n_infected) + 1
     node_n = infected(index_inf)
     ! immunize to current mutation before mutating
     call immunize(immune,state,node_n,N,immune_length)
